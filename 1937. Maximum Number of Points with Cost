@@ -33,3 +33,69 @@ public:
         return ans;
     }
 };
+
+#define ll long long int
+class Solution {
+public:
+    long long maxPoints(vector<vector<int>>& a) {
+        ll n=a.size();
+        ll m=a[0].size();
+        vector<vector<ll>> dp(n,vector<ll> (m,-1));
+        for(ll j=0;j<m;j++){
+            dp[0][j]=a[0][j];
+        }
+        for(ll i=1;i<n;i++){
+            vector<ll> lft(m,-1);
+            vector<ll> rgt(m,-1);
+            //assigning value to left array ie max(dp[i - 1][k] + k)
+            lft[0]=dp[i-1][0];
+            for(ll j=1;j<m;j++){
+                lft[j]=max(lft[j-1]-1,dp[i-1][j]);
+            }
+            //assigning value to right array ie max(dp[i - 1][k]- k)
+            rgt[m-1]=dp[i-1][m-1];
+            for(ll j=m-2;j>=0;j--){
+                rgt[j]=max(rgt[j+1]-1,dp[i-1][j]);
+            }
+            // taking maximum of max(dp[i-1][k]-k+j,dp[i-1][k]+k-j)
+            for(ll j=0;j<m;j++){
+                dp[i][j]=max(lft[j]+a[i][j],rgt[j]+a[i][j]);
+            }
+        }
+        ll ans=0;
+        for(auto x:dp[n-1]){
+            ans=max(ans,x);
+        }
+        return ans;
+    }
+};
+
+
+#define ll long long int
+class Solution {
+public:
+    long long maxPoints(vector<vector<int>>& P) {
+        long long m = P.size(), n = P[0].size();
+        vector<long long> pre(n);
+        for (int i = 0; i < n; ++i) pre[i] = P[0][i];
+        for (int i = 0; i < m - 1; ++i){
+            vector<long long> lft(n, 0), rgt(n, 0), cur(n, 0);
+            lft[0] = pre[0];
+            rgt[n - 1] = pre[n - 1];
+            for (int j = 1; j < n; ++j){
+                lft[j] = max(lft[j - 1] - 1, pre[j]);
+            }
+            for (int j = n - 2; j >= 0; --j){
+                rgt[j] = max(rgt[j + 1] - 1, pre[j]);
+            }
+            for (int j = 0; j < n; ++j){
+                cur[j] = P[i + 1][j] + max(lft[j], rgt[j]);
+            }
+            pre = cur;
+        }
+        long long ans = 0;
+        for (int i = 0; i < n; ++i)
+            ans = max(ans, pre[i]);
+        return ans;
+    }
+};
